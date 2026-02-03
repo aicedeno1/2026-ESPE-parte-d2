@@ -11,76 +11,61 @@ public class File {
     private FileType type;
     private List<Character> content;
 
-	/*
-	 * Constructor
-	 */
+    /*
+     * Constructor
+     */
     public File() {
-
+        // content debe estar vacío pero no null
         this.content = new ArrayList<Character>();
-        
     }
 
-	/*
-	 * Method to test
-	 */
-    public void addProperty(char[] newcontent) throws InvalidContentException, WrongFileTypeException {
+    /*
+     * Method to test
+     */
+    public void addProperty(char[] newcontent)
+            throws InvalidContentException, WrongFileTypeException {
 
         if (newcontent == null) {
-        	
             throw new InvalidContentException();
-            
         }
 
         if (type == FileType.IMAGE) {
-        	
             throw new WrongFileTypeException();
-            
         }
 
         for (char c : newcontent) {
-        	
             this.content.add(c);
-            
         }
     }
 
-	/*
-	 * Method to test
-	 */
+    /*
+     * Method to test
+     */
     public long getCRC32() {
-    	
-        if (this.content.isEmpty()) {
-        	
+
+        // calculateCRC32 no admite arrays vacíos
+        if (content.isEmpty()) {
             return 0L;
-            
         }
 
+        // Conversión ArrayList<Character> → byte[]
+        // Se usa solo el byte menos significativo (0–255)
         byte[] bytes = new byte[content.size()];
         for (int i = 0; i < content.size(); i++) {
-        	
-            char c = content.get(i);
-            bytes[i * 2] = (byte) ((c >>> 8) & 0xFF);
-            bytes[i * 2 + 1] = (byte) (c & 0xFF);
-            
+            bytes[i] = (byte) (content.get(i) & 0xFF);
         }
-        
+
         return new FileUtils().calculateCRC32(bytes);
     }
-    
-    
-	/*
-	 * Setters/getters
-	 */
+
+    /*
+     * Setters / getters
+     */
     public void setType(FileType type) {
-    	
-    	this.type = type;
-    	
+        this.type = type;
     }
-    
+
     public List<Character> getContent() {
-    	
-    	return content;
-    	
+        return content;
     }
-    
 }
